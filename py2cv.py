@@ -46,6 +46,7 @@ from py2cv.gui.aboutdialog import AboutDialog
 from py2cv.gui.configwindow import ConfigWindow
 from py2cv.gui.popupdialog import PopUpDialog
 from py2cv.gui.treehandling import TreeHandler
+from copy import deepcopy
 
 from PyQt5.QtWidgets import QMainWindow, QGraphicsView, QFileDialog, QApplication, QMessageBox
 from PyQt5 import QtCore
@@ -516,6 +517,17 @@ class MainWindow(QMainWindow):
                                             x2 = int(x0 - 1000*(-b))
                                             y2 = int(y0 - 1000*(a))
                                             cv2.line(self.imglist[len(self.imglist)-1],(x1,y1),(x2,y2),(0,0,255),2)
+                            
+                            if layerContent.name == 'HoughCircles':
+                                circles = []
+                                circles.clear()
+                                circles = cv2.HoughCircles(self.imglist[len(self.imglist)-1], cv2.HOUGH_GRADIENT, layerContent.children[0].value, layerContent.children[1].value, param1 = layerContent.children[2].value, param2 = layerContent.children[3].value, minRadius = int(layerContent.children[4].value), maxRadius = int(layerContent.children[5].value))
+                                if hasattr(circles,'size'):
+                                    self.imglist.append(self.imglist[0].copy())
+                                    self.imglist[0] = self.img
+                                    for i in circles[0, :]:
+                                        cv2.circle(self.imglist[len(self.imglist)-1], (i[0], i[1]), int(i[2]), (0, 255, 0), 2)
+                                        cv2.circle(self.imglist[len(self.imglist)-1], (i[0], i[1]), 2, (0, 0, 255), 3)
                         except Exception as e:
                             logger.error(self.tr('Error with %s') % str (e))
                             QMessageBox.warning(g.window,
@@ -563,6 +575,8 @@ class MainWindow(QMainWindow):
             self.createfindContoursLayer()
         elif layerCreateDialog.result == 'HoughLines':
             self.createHoughLinesLayer()
+        elif layerCreateDialog.result == 'HoughCircles':
+            self.createHoughCirclesLayer()
         
         self.updateOpencv()
     
@@ -608,14 +622,14 @@ class MainWindow(QMainWindow):
 
             tempChildren = Layers([])
             tempChildren.name = 'width'
-            tempChildren.value = 5
+            tempChildren.value = 3
             tempChildren.note = 'ksize.width'
             layerContent.children.append(tempChildren)
 
             
             tempChildren = Layers([])
             tempChildren.name = 'height'
-            tempChildren.value = 5
+            tempChildren.value = 3
             tempChildren.note = 'ksize.height'
             layerContent.children.append(tempChildren)
 
@@ -679,6 +693,45 @@ class MainWindow(QMainWindow):
 
         self.layerContents.append(layerContent)
         self.TreeHandler.buildEntitiesTree(self.layerContents)
+    
+    def createHoughCirclesLayer(self):
+            layerContent = Layers([])
+            layerContent.name = 'HoughCircles'
+            layerContent.children=[]
+            tempChildren = Layers([])
+
+            tempChildren.name = 'dp'
+            tempChildren.value = 1.5
+            tempChildren.note = 'Inverse ratio'
+            layerContent.children.append(deepcopy(tempChildren))
+
+            tempChildren.name = 'minDist'
+            tempChildren.value = 100
+            tempChildren.note = 'Minimum distance between two circles'
+            layerContent.children.append(deepcopy(tempChildren))
+
+            tempChildren.name = 'param1'
+            tempChildren.value = 100
+            tempChildren.note = 'do not change'
+            layerContent.children.append(deepcopy(tempChildren))
+
+            tempChildren.name = 'param2'
+            tempChildren.value = 30
+            tempChildren.note = 'do not change'
+            layerContent.children.append(deepcopy(tempChildren))
+
+            tempChildren.name = 'minRadius'
+            tempChildren.value = 10
+            tempChildren.note = 'Minimum circle radius'
+            layerContent.children.append(deepcopy(tempChildren))
+
+            tempChildren.name = 'maxRadius'
+            tempChildren.value = 0
+            tempChildren.note = 'Maximum circle radius'
+            layerContent.children.append(deepcopy(tempChildren))
+
+            self.layerContents.append(layerContent)
+            self.TreeHandler.buildEntitiesTree(self.layerContents)
 
     def layerDelete(self):
         if self.TreeHandler.ui.entitiesTreeView.selectionModel() != None:
