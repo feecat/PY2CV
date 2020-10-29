@@ -176,7 +176,10 @@ class MainWindow(QMainWindow):
     def startCameraShoot(self):
         self.openCameraShoot()
         # FIXME Need add something return vars
-        sendData = 'test'.encode()
+        if hasattr(self.layerContents,'result'):
+            sendData = str(self.layerContents.result).encode()
+        else:
+            sendData = 'Error'.encode()
         self.clientConnection.write(sendData)
         pass
 
@@ -503,21 +506,31 @@ class MainWindow(QMainWindow):
                                 lines.clear()
                                 lines = cv2.HoughLines(self.imglist[len(self.imglist)-1], layerContent.children[0].value, layerContent.children[1].value, layerContent.children[2].value)
                                 if hasattr(lines,'size'):
-                                    if len(lines) > 0:
-                                        self.imglist.append(self.imglist[0].copy())
-                                        self.imglist[0] = self.img
-                                        for line in lines:
-                                            rho, theta = line[0]
-                                            a = np.cos(theta)
-                                            b = np.sin(theta)
-                                            x0 = a*rho
-                                            y0 = b*rho
-                                            x1 = int(x0 + 1000*(-b))
-                                            y1 = int(y0 + 1000*(a))
-                                            x2 = int(x0 - 1000*(-b))
-                                            y2 = int(y0 - 1000*(a))
-                                            cv2.line(self.imglist[len(self.imglist)-1],(x1,y1),(x2,y2),(0,0,255),2)
-                            
+                                    self.imglist.append(self.imglist[0].copy())
+                                    self.imglist[0] = self.img
+                                    for line in lines:
+                                        rho, theta = line[0]
+                                        a = np.cos(theta)
+                                        b = np.sin(theta)
+                                        x0 = a*rho
+                                        y0 = b*rho
+                                        x1 = int(x0 + 1000*(-b))
+                                        y1 = int(y0 + 1000*(a))
+                                        x2 = int(x0 - 1000*(-b))
+                                        y2 = int(y0 - 1000*(a))
+                                        cv2.line(self.imglist[len(self.imglist)-1],(x1,y1),(x2,y2),(0,0,255),2 , lineType=cv2.LINE_AA)
+                                    self.layerContents.result = lines
+                            if layerContent.name == 'HoughLinesP':
+                                lines = []
+                                lines.clear()
+                                lines = cv2.HoughLinesP(self.imglist[len(self.imglist)-1], layerContent.children[0].value, layerContent.children[1].value, layerContent.children[2].value, minLineLength = layerContent.children[3].value, maxLineGap = layerContent.children[4].value)
+                                if hasattr(lines,'size'):
+                                    self.imglist.append(self.imglist[0].copy())
+                                    self.imglist[0] = self.img
+                                    for line in lines:
+                                        x1, y1, x2, y2 = line[0]
+                                        cv2.line(self.imglist[len(self.imglist)-1], (x1, y1), (x2, y2), (0, 255, 0), 1, lineType=cv2.LINE_AA)
+                                    self.layerContents.result = lines
                             if layerContent.name == 'HoughCircles':
                                 circles = []
                                 circles.clear()
@@ -528,6 +541,7 @@ class MainWindow(QMainWindow):
                                     for i in circles[0, :]:
                                         cv2.circle(self.imglist[len(self.imglist)-1], (i[0], i[1]), int(i[2]), (0, 255, 0), 2)
                                         cv2.circle(self.imglist[len(self.imglist)-1], (i[0], i[1]), 2, (0, 0, 255), 3)
+                                    self.layerContents.result = circles
                         except Exception as e:
                             logger.error(self.tr('Error with %s') % str (e))
                             QMessageBox.warning(g.window,
@@ -575,6 +589,8 @@ class MainWindow(QMainWindow):
             self.createfindContoursLayer()
         elif layerCreateDialog.result == 'HoughLines':
             self.createHoughLinesLayer()
+        elif layerCreateDialog.result == 'HoughLinesP':
+            self.createHoughLinesPLayer()
         elif layerCreateDialog.result == 'HoughCircles':
             self.createHoughCirclesLayer()
         
@@ -593,7 +609,6 @@ class MainWindow(QMainWindow):
 
             self.layerContents.append(layerContent)
             self.TreeHandler.buildEntitiesTree(self.layerContents)
-
 
     def createCannyLayer(self):
             layerContent = Layers([])
@@ -674,26 +689,61 @@ class MainWindow(QMainWindow):
         layerContent.children=[]
 
         tempChildren = Layers([])
-        tempChildren.name = 'r'
+        tempChildren.name = 'rho'
         tempChildren.value = 0.8
-        tempChildren.note = 'r'
+        tempChildren.note = 'Distance resolution'
         layerContent.children.append(tempChildren)
 
         tempChildren = Layers([])
-        tempChildren.name = 'θ'
+        tempChildren.name = 'theta'
         tempChildren.value = 0.01
-        tempChildren.note = 'θ'
+        tempChildren.note = 'Angle resolution'
         layerContent.children.append(tempChildren)
 
         tempChildren = Layers([])
-        tempChildren.name = 'length'
+        tempChildren.name = 'threshold'
         tempChildren.value = 100
-        tempChildren.note = 'length'
+        tempChildren.note = 'Accumulator threshold parameter'
         layerContent.children.append(tempChildren)
 
         self.layerContents.append(layerContent)
         self.TreeHandler.buildEntitiesTree(self.layerContents)
     
+    def createHoughLinesPLayer(self):
+        layerContent = Layers([])
+        layerContent.name = 'HoughLinesP'
+        layerContent.children=[]
+        tempChildren = Layers([])
+
+        tempChildren.name = 'rho'
+        tempChildren.value = 0.8
+        tempChildren.note = 'Distance resolution'
+        layerContent.children.append(deepcopy(tempChildren))
+        
+        tempChildren.name = 'theta'
+        tempChildren.value = 0.01
+        tempChildren.note = 'Angle resolution'
+        layerContent.children.append(deepcopy(tempChildren))
+
+        tempChildren.name = 'threshold'
+        tempChildren.value = 100
+        tempChildren.note = 'Accumulator threshold parameter'
+        layerContent.children.append(deepcopy(tempChildren))
+
+        tempChildren.name = 'minLineLength'
+        tempChildren.value = 10
+        tempChildren.note = 'Minimum line length'
+        layerContent.children.append(deepcopy(tempChildren))
+
+        tempChildren.name = 'maxLineGap'
+        tempChildren.value = 500
+        tempChildren.note = 'Maximum allowed gap'
+        layerContent.children.append(deepcopy(tempChildren))
+
+        self.layerContents.append(layerContent)
+        self.TreeHandler.buildEntitiesTree(self.layerContents)
+
+
     def createHoughCirclesLayer(self):
             layerContent = Layers([])
             layerContent.name = 'HoughCircles'
