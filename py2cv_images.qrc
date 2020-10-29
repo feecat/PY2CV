@@ -1,0 +1,18 @@
+<RCC>
+  <qresource>
+    <file>images/opencv.ico</file>
+    <file>images/icons8-add-property-48.png</file>
+    <file>images/icons8-full-image-48.png</file>
+    <file>images/icons8-lens-48.png</file>
+    <file>images/icons8-send-file-48.png</file>
+    <file>images/custom.png</file>
+    <file>images/blocks.png</file>
+    <file>images/collapse-all.png</file>
+    <file>images/delete.png</file>
+    <file>images/expand-all.png</file>
+    <file>images/layer.png</file>
+    <file>images/shape.png</file>
+    <file>images/list-add.png</file>
+    <file>images/list-remove.png</file>
+  </qresource>
+</RCC>
