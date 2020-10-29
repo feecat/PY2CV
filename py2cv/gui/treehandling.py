@@ -490,7 +490,7 @@ class TreeHandler(QWidget):
             #value modified
             stype = type(self.entities_list[item.parent().row()].children[item.row()].value)
             if stype is int:
-                self.entities_list[item.parent().row()].children[item.row()].value = int(item.text())
+                self.entities_list[item.parent().row()].children[item.row()].value = int(float(item.text()))
             elif stype is float:
                 self.entities_list[item.parent().row()].children[item.row()].value = float(item.text())
         
