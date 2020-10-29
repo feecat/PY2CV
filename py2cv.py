@@ -495,6 +495,12 @@ class MainWindow(QMainWindow):
                                 self.imglist.append(cv2.Canny(self.imglist[len(self.imglist)-1], layerContent.children[0].value, layerContent.children[1].value))
                             if layerContent.name == 'cvtColor':
                                 self.imglist.append(cv2.cvtColor(self.imglist[len(self.imglist)-1], cv2.COLOR_RGB2GRAY))
+                            if layerContent.name == 'threshold':
+                                if layerContent.children[2] == 1:
+                                    ret, th = cv2.threshold(self.imglist[len(self.imglist)-1],layerContent.children[0].value, layerContent.children[1].value, cv2.THRESH_BINARY + cv2.THRESH_TRIANGLE)
+                                else:
+                                    ret, th = cv2.threshold(self.imglist[len(self.imglist)-1],layerContent.children[0].value, layerContent.children[1].value, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+                                self.imglist.append(th)
                             if layerContent.name == 'GaussianBlur':
                                 self.imglist.append(cv2.GaussianBlur(self.imglist[len(self.imglist)-1],(layerContent.children[0].value, layerContent.children[1].value),layerContent.children[2].value))
                             if layerContent.name == 'findContours':
@@ -567,6 +573,7 @@ class MainWindow(QMainWindow):
                  self.tr("HoughLines"),
                  self.tr("HoughLinesP"),
                  self.tr("HoughCircles"),
+                 self.tr("threshold"),
                  ]
         abc = 0
         value = [abc]
@@ -593,6 +600,8 @@ class MainWindow(QMainWindow):
             self.createHoughLinesPLayer()
         elif layerCreateDialog.result == 'HoughCircles':
             self.createHoughCirclesLayer()
+        elif layerCreateDialog.result == 'threshold':
+            self.createthresholdLayer()
         
         self.updateOpencv()
     
@@ -738,6 +747,30 @@ class MainWindow(QMainWindow):
         tempChildren.name = 'maxLineGap'
         tempChildren.value = 500
         tempChildren.note = 'Maximum allowed gap'
+        layerContent.children.append(deepcopy(tempChildren))
+
+        self.layerContents.append(layerContent)
+        self.TreeHandler.buildEntitiesTree(self.layerContents)
+
+    def createthresholdLayer(self):
+        layerContent = Layers([])
+        layerContent.name = 'threshold'
+        layerContent.children=[]
+        tempChildren = Layers([])
+
+        tempChildren.name = 'thresh'
+        tempChildren.value = 0
+        tempChildren.note = 'thresh'
+        layerContent.children.append(deepcopy(tempChildren))
+
+        tempChildren.name = 'maxval'
+        tempChildren.value = 255
+        tempChildren.note = 'maxval'
+        layerContent.children.append(deepcopy(tempChildren))
+
+        tempChildren.name = 'triangle'
+        tempChildren.value = 0
+        tempChildren.note = '0=otsu,1=triangle'
         layerContent.children.append(deepcopy(tempChildren))
 
         self.layerContents.append(layerContent)
