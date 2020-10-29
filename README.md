@@ -2,7 +2,7 @@
 
 Industrial Machine Vision Based on Python and OpenCV, The QT Frame Based On DXF2GCODE. The Target is same as In-Sight Explorer
 
-![](https://github.com/feecat/DOC/IMAGE/Example_1.gif)
+![](https://github.com/feecat/PY2CV/blob/master/DOC/Example_1.gif)
 
 ## Origin
 
