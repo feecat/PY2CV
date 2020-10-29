@@ -134,7 +134,7 @@ class Project(object):
                 tempLayer.name = shape['name']
                 tempLayer.value = shape['value']
                 tempLayer.note = shape['note']
-                layer.children.append(tempLayer)
+                layer.children.append(deepcopy(tempLayer))
             
             layers.append(deepcopy(layer))
 
