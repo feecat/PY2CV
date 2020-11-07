@@ -190,7 +190,7 @@
             <number>1</number>
            </property>
            <item>
-            <widget class="QPushButton" name="blocksCollapsePushButton">
+            <widget class="QPushButton" name="layerMoveUpPushButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -202,7 +202,7 @@
              </property>
              <property name="icon">
               <iconset resource="py2cv_images.qrc">
-               <normaloff>:/images/collapse-all.png</normaloff>:/images/collapse-all.png</iconset>
+               <normaloff>:/images/go-up.png</normaloff>:/images/go-up.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -213,7 +213,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="blocksExpandPushButton">
+            <widget class="QPushButton" name="layerMoveDownPushButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -225,7 +225,7 @@
              </property>
              <property name="icon">
               <iconset resource="py2cv_images.qrc">
-               <normaloff>:/images/expand-all.png</normaloff>:/images/expand-all.png</iconset>
+               <normaloff>:/images/go-down.png</normaloff>:/images/go-down.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -737,8 +737,8 @@
  <tabstops>
   <tabstop>mytabWidget</tabstop>
   <tabstop>entitiesTreeView</tabstop>
-  <tabstop>blocksCollapsePushButton</tabstop>
-  <tabstop>blocksExpandPushButton</tabstop>
+  <tabstop>layerMoveUpPushButton</tabstop>
+  <tabstop>layerMoveDownPushButton</tabstop>
   <tabstop>canvas</tabstop>
   <tabstop>messageBox</tabstop>
  </tabstops>

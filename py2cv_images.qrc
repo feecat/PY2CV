@@ -1,5 +1,7 @@
 <RCC>
   <qresource>
+    <file>images/go-down.png</file>
+    <file>images/go-up.png</file>
     <file>images/opencv.ico</file>
     <file>images/icons8-add-property-48.png</file>
     <file>images/icons8-full-image-48.png</file>

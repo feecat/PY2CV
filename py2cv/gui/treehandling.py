@@ -131,8 +131,11 @@ class TreeHandler(QWidget):
         self.ui.entitiesTreeView.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.ui.entitiesTreeView.setSelectionBehavior(QAbstractItemView.SelectRows)
 
-        self.ui.blocksCollapsePushButton.clicked.connect(self.expandToDepth0)
-        self.ui.blocksExpandPushButton.clicked.connect(self.ui.entitiesTreeView.expandAll)
+        #self.ui.blocksCollapsePushButton.clicked.connect(self.expandToDepth0)
+        #self.ui.blocksExpandPushButton.clicked.connect(self.ui.entitiesTreeView.expandAll)
+        self.ui.layerMoveUpPushButton.clicked.connect(self.layerMoveUp)
+        self.ui.layerMoveDownPushButton.clicked.connect(self.layerMoveDown)
+
 
         # Build the contextual menu (mouse right click)
         self.context_menu = QMenu(self)
@@ -255,6 +258,42 @@ class TreeHandler(QWidget):
 
     def AddCustomGCodeRowLayer(self, custom_gcode, parent_item, push_row=None):
         pass
+
+    def layerMoveUp(self):
+        if self.ui.entitiesTreeView.selectionModel() != None:
+            selectedRows = self.ui.entitiesTreeView.selectionModel().selectedRows()
+            if len(selectedRows) > 0:
+                if selectedRows[0].parent().row() == -1:
+                    # no parent
+                    row = selectedRows[0].row()
+                else:
+                    # have parent
+                    row = selectedRows[0].parent().row()
+                g.window.layerContents.insert(row-1,g.window.layerContents[row])
+                g.window.layerContents.pop(row+1)
+                self.buildEntitiesTree(g.window.layerContents)
+                logger.debug(self.tr("Layer Move Up: %s" % str(row)))
+                g.window.updateOpencv()
+                return
+        logger.debug(self.tr("nothing moved"))
+
+    def layerMoveDown(self):
+        if self.ui.entitiesTreeView.selectionModel() != None:
+            selectedRows = self.ui.entitiesTreeView.selectionModel().selectedRows()
+            if len(selectedRows) > 0:
+                if selectedRows[0].parent().row() == -1:
+                    # no parent
+                    row = selectedRows[0].row()
+                else:
+                    # have parent
+                    row = selectedRows[0].parent().row()
+                g.window.layerContents.insert(row+2,g.window.layerContents[row])
+                g.window.layerContents.pop(row)
+                self.buildEntitiesTree(g.window.layerContents)
+                logger.debug(self.tr("Layer Move Down: %s" % str(row)))
+                g.window.updateOpencv()
+                return
+        logger.debug(self.tr("nothing moved"))
 
     def buildEntitiesTree(self, entities_list):
         """
