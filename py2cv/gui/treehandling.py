@@ -338,7 +338,7 @@ class TreeHandler(QWidget):
             (checked, unchecked) = self.buildEntitiesSubTree(item_col_0, element.children)
             containsChecked = containsChecked or checked
             containsUnchecked = containsUnchecked or unchecked
-            element.enable = 1
+            #element.enable = 1
         else:
             #children
             item_col_0 = QStandardItem()  # will only display a checkbox + an icon that will never be disabled
@@ -351,7 +351,10 @@ class TreeHandler(QWidget):
         flags = QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled
 
         if hasattr(element,'children'):
-            item_col_0.setCheckState(QtCore.Qt.Checked)
+            if element.enable:
+                item_col_0.setCheckState(QtCore.Qt.Checked)
+            else:
+                item_col_0.setCheckState(QtCore.Qt.Unchecked)
             item_col_0.setFlags(flags | QtCore.Qt.ItemIsUserCheckable)
         else:
             item_col_0.setFlags(flags)

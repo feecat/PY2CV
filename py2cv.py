@@ -425,7 +425,7 @@ class MainWindow(QMainWindow):
         self.imglist.append(self.img)
         self.imgshow()
         if len(self.layerContents) > 0:
-            self.TreeHandler.buildEntitiesTree(self.layerContents)
+            # self.TreeHandler.buildEntitiesTree(self.layerContents)
             self.updateOpencv()
         self.app.processEvents()
 
@@ -550,6 +550,9 @@ class MainWindow(QMainWindow):
                                     self.layerContents.result = circles
                         except Exception as e:
                             logger.error(self.tr('Error with %s') % str (e))
+                            # Disable act layer and update tree view
+                            layerContent.enable = 0
+                            self.TreeHandler.buildEntitiesTree(self.layerContents)
                             QMessageBox.warning(g.window,
                                                 self.tr("Error"),
                                                 self.tr("Error with:\n%s") % str (e))
@@ -606,76 +609,80 @@ class MainWindow(QMainWindow):
         self.updateOpencv()
     
     def createcvtColorLayer(self):
-            layerContent = Layers([])
-            layerContent.name = 'cvtColor'
-            layerContent.children=[]
+        layerContent = Layers([])
+        layerContent.name = 'cvtColor'
+        layerContent.children = []
+        layerContent.enable = 1
 
-            tempChildren = Layers([])
-            tempChildren.name = 'low'
-            tempChildren.value = 50
-            tempChildren.note = 'threshold1'
-            layerContent.children.append(tempChildren)
+        tempChildren = Layers([])
+        tempChildren.name = 'low'
+        tempChildren.value = 50
+        tempChildren.note = 'threshold1'
+        layerContent.children.append(tempChildren)
 
-            self.layerContents.append(layerContent)
-            self.TreeHandler.buildEntitiesTree(self.layerContents)
+        self.layerContents.append(layerContent)
+        self.TreeHandler.buildEntitiesTree(self.layerContents)
 
     def createCannyLayer(self):
-            layerContent = Layers([])
-            layerContent.name = 'Canny'
-            layerContent.children=[]
+        layerContent = Layers([])
+        layerContent.name = 'Canny'
+        layerContent.children=[]
+        layerContent.enable = 1
 
-            tempChildren = Layers([])
-            tempChildren.name = 'low'
-            tempChildren.value = 50
-            tempChildren.note = 'threshold1'
-            layerContent.children.append(tempChildren)
+        tempChildren = Layers([])
+        tempChildren.name = 'low'
+        tempChildren.value = 50
+        tempChildren.note = 'threshold1'
+        layerContent.children.append(tempChildren)
 
-            tempChildren = Layers([])
-            tempChildren.name = 'high'
-            tempChildren.value = 100
-            tempChildren.note = 'threshold2'
-            layerContent.children.append(tempChildren)
+        tempChildren = Layers([])
+        tempChildren.name = 'high'
+        tempChildren.value = 100
+        tempChildren.note = 'threshold2'
+        layerContent.children.append(tempChildren)
 
-            self.layerContents.append(layerContent)
-            self.TreeHandler.buildEntitiesTree(self.layerContents)
+        self.layerContents.append(layerContent)
+        self.TreeHandler.buildEntitiesTree(self.layerContents)
     
     def createGaussianBlurLayer(self):
-            layerContent = Layers([])
-            layerContent.name = 'GaussianBlur'
-            layerContent.children=[]
+        layerContent = Layers([])
+        layerContent.name = 'GaussianBlur'
+        layerContent.children=[]
+        layerContent.enable = 1
 
-            tempChildren = Layers([])
-            tempChildren.name = 'width'
-            tempChildren.value = 3
-            tempChildren.note = 'ksize.width'
-            layerContent.children.append(tempChildren)
+        tempChildren = Layers([])
+        tempChildren.name = 'width'
+        tempChildren.value = 3
+        tempChildren.note = 'ksize.width'
+        layerContent.children.append(tempChildren)
 
-            
-            tempChildren = Layers([])
-            tempChildren.name = 'height'
-            tempChildren.value = 3
-            tempChildren.note = 'ksize.height'
-            layerContent.children.append(tempChildren)
+        
+        tempChildren = Layers([])
+        tempChildren.name = 'height'
+        tempChildren.value = 3
+        tempChildren.note = 'ksize.height'
+        layerContent.children.append(tempChildren)
 
-            tempChildren = Layers([])
-            tempChildren.name = 'sigmaX'
-            tempChildren.value = 0
-            tempChildren.note = 'sigmaX'
-            layerContent.children.append(tempChildren)
+        tempChildren = Layers([])
+        tempChildren.name = 'sigmaX'
+        tempChildren.value = 0
+        tempChildren.note = 'sigmaX'
+        layerContent.children.append(tempChildren)
 
-            tempChildren = Layers([])
-            tempChildren.name = 'sigmaY'
-            tempChildren.value = 0
-            tempChildren.note = 'sigmaY'
-            layerContent.children.append(tempChildren)
+        tempChildren = Layers([])
+        tempChildren.name = 'sigmaY'
+        tempChildren.value = 0
+        tempChildren.note = 'sigmaY'
+        layerContent.children.append(tempChildren)
 
-            self.layerContents.append(layerContent)
-            self.TreeHandler.buildEntitiesTree(self.layerContents)
+        self.layerContents.append(layerContent)
+        self.TreeHandler.buildEntitiesTree(self.layerContents)
 
     def createfindContoursLayer(self):
         layerContent = Layers([])
         layerContent.name = 'findContours'
         layerContent.children=[]
+        layerContent.enable = 1
 
         tempChildren = Layers([])
         tempChildren.name = 'RM'
@@ -696,6 +703,7 @@ class MainWindow(QMainWindow):
         layerContent = Layers([])
         layerContent.name = 'HoughLines'
         layerContent.children=[]
+        layerContent.enable = 1
 
         tempChildren = Layers([])
         tempChildren.name = 'rho'
@@ -723,6 +731,7 @@ class MainWindow(QMainWindow):
         layerContent.name = 'HoughLinesP'
         layerContent.children=[]
         tempChildren = Layers([])
+        layerContent.enable = 1
 
         tempChildren.name = 'rho'
         tempChildren.value = 0.8
@@ -757,6 +766,7 @@ class MainWindow(QMainWindow):
         layerContent.name = 'threshold'
         layerContent.children=[]
         tempChildren = Layers([])
+        layerContent.enable = 1
 
         tempChildren.name = 'thresh'
         tempChildren.value = 0
