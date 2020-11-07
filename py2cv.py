@@ -435,6 +435,15 @@ class MainWindow(QMainWindow):
         make the plot.
         @param plot: if it should plot
         """
+        if len(self.filename) < 1:
+            self.setWindowTitle("PY2CV - [%s]" % self.filename)
+            self.canvas.resetAll()
+            self.app.processEvents()
+            if len(self.layerContents) > 0:
+                self.TreeHandler.buildEntitiesTree(self.layerContents)
+                self.updateOpencv()
+            self.unsetCursor()
+            return True
         if not QtCore.QFile.exists(self.filename):
             logger.info(self.tr("Cannot locate file: %s") % self.filename)
             self.OpenFileDialog(self.tr("Manually open file: %s") % self.filename)

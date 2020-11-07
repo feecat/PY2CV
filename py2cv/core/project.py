@@ -97,6 +97,7 @@ class Project(object):
                                       'value': children.value,
                                       'note': children.note})
             layers.append({'name': layer.name,
+                           'enable': layer.enable,
                            'shapes': shapes})
 
         pyCode = Project.header % str(Project.version) + '\n' +\
@@ -126,6 +127,7 @@ class Project(object):
         layer = Layers([])
         for parent_layer in self.layers:
             layer.name = parent_layer['name']
+            layer.enable = parent_layer['enable']
             layer.children = []
 
             tempLayer = Layers([])
